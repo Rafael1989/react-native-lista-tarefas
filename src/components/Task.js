@@ -1,9 +1,10 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
 import commonStyles from '../commonStyles'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
 import 'moment/locale/pt-br'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 
 export default props => {
 
@@ -13,18 +14,28 @@ export default props => {
 
     const formattedDate = moment(date).locale('pt-br').format('ddd, D [de] MMMM')
 
+    const getRightContent = () => {
+        return(
+            <TouchableOpacity style={styles.right}>
+                <Icon name="trash" size={30} color='#FFF'/>
+            </TouchableOpacity>
+        )
+    }
+
     return (
-        <View style={styles.container}>
-            <TouchableWithoutFeedback onPress={() => props.toogleTask(props.id)}>
-                <View style={styles.checkContainer}>
-                    {getCheckView(props.doneAt)}
+        <Swipeable renderRightActions={getRightContent}>
+            <View style={styles.container}>
+                <TouchableWithoutFeedback onPress={() => props.toogleTask(props.id)}>
+                    <View style={styles.checkContainer}>
+                        {getCheckView(props.doneAt)}
+                    </View>
+                </TouchableWithoutFeedback>
+                <View>
+                    <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
+                    <Text style={styles.date}>{formattedDate}</Text>
                 </View>
-            </TouchableWithoutFeedback>
-            <View>
-                <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
-                <Text style={styles.date}>{formattedDate}</Text>
             </View>
-        </View>
+        </Swipeable>
     )
 }
 
@@ -79,5 +90,12 @@ const styles = StyleSheet.create({
     date: {
         fontFamily: commonStyles.colors.subText,
         fontSize: 12,
+    },
+    right: {
+        backgroundColor: 'red',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingHorizontal: 20
     }
 })
