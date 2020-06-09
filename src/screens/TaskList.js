@@ -7,28 +7,25 @@ import commonStyles from '../commonStyles'
 import Task from '../components/Task'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import AddTask from './AddTask'
+import AsyncStorage from "@react-native-community/async-storage"
+
+const initialState = {
+    showDoneTasks: true,
+    showAddTask: false,
+    visibleTasks: [],
+    tasks: []
+}
 
 export default class TaskList extends Component {
 
     state = {
-        showDoneTasks: true,
-        showAddTask: false,
-        visibleTasks: [],
-        tasks: [{
-            id: Math.random(),
-            desc: 'Comprar Livro de React Native',
-            estimateAt: new Date(),
-            doneAt: new Date(),
-        },{
-            id: Math.random(),
-            desc: 'Ler Livro de React Native',
-            estimateAt: new Date(),
-            doneAt: null,
-        }]
+        ...initialState
     }
 
-    componentDidMount = () => {
-        this.filterTasks()
+    componentDidMount = async () => {
+        const stateString = await AsyncStorage.getItem('tasksState')
+        const state = JSON.parse(stateString) || initialState
+        this.setState(state, this.filterTasks)
     }
 
     toogleFilter = () => {
@@ -45,6 +42,7 @@ export default class TaskList extends Component {
         }
 
         this.setState({visibleTasks})
+        AsyncStorage.setItem('tasksState',JSON.stringify(this.state))
     }
 
     toogleTask = taskId => {
@@ -75,6 +73,11 @@ export default class TaskList extends Component {
         this.setState({ tasks, showAddTask: false}, this.filterTasks)
     }
 
+    deleteTask = id => {
+        const tasks = this.state.tasks.filter(task => task.id !== id)
+        this.setState({tasks}, this.filterTasks)
+    }
+
     render() {
         const today = moment().locale('pt-br').format('ddd, D [de] MMMM')
         return (
@@ -94,7 +97,7 @@ export default class TaskList extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.visibleTasks} 
                         keyExtractor={item => `${item.id}`} 
-                        renderItem={({item}) => <Task {...item} toogleTask={this.toogleTask} />} />
+                        renderItem={({item}) => <Task {...item} onToogleTask={this.toogleTask} onDelete={this.deleteTask} />} />
                 </View>
                 <TouchableOpacity style={styles.addButton} activeOpacity={0.7} onPress={() => this.setState({showAddTask: true})}>
                     <Icon name="plus" size={20} color={commonStyles.colors.secondary} />
