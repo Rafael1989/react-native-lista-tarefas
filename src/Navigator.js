@@ -26,14 +26,14 @@ const menuConfig = {
 const menuRoutes = {
     Today: {
         name: 'Today',
-        screen: props => <TaskList title='Hoje' daysAhead={0} {...props} />,
+        screen: props => <TaskList title='Hoje' daysAhead={1} {...props} />,
         navigationOptions: {
             title: 'Hoje'
         }
     },
     Tomorrow: {
         name: 'Tomorrow',
-        screen: props => <TaskList title='Amanhã' daysAhead={1} {...props} />,
+        screen: props => <TaskList title='Amanhã' daysAhead={2} {...props} />,
         navigationOptions: {
             title: 'Amanhã'
         }

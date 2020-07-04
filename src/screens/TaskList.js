@@ -41,7 +41,7 @@ export default class TaskList extends Component {
         try {
             const maxDate = moment()
                 .add({days: this.props.daysAhead})
-                .format('YYYY-MM-DD 23:59:59')
+                .format('YYYY-MM-DD')
             const res = await axios.get(`${server}/tasks?date=${maxDate}`)
             this.setState({tasks: res.data}, this.filterTasks)
         }catch(e) {
@@ -108,8 +108,8 @@ export default class TaskList extends Component {
 
     getImage = () => {
         switch(this.props.daysAhead) {
-            case 0: return todayImage
-            case 1: return tomorrowImage
+            case 1: return todayImage
+            case 2: return tomorrowImage
             case 7: return weekImage
             default: return monthImage
         }
@@ -117,8 +117,8 @@ export default class TaskList extends Component {
 
     getColor = () => {
         switch(this.props.daysAhead) {
-            case 0: return commonStyles.colors.today
-            case 1: return commonStyles.colors.tomorrow
+            case 1: return commonStyles.colors.today
+            case 2: return commonStyles.colors.tomorrow
             case 7: return commonStyles.colors.week
             default: return commonStyles.colors.month
         }
